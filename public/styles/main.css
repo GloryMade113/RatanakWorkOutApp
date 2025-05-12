@@ -1,0 +1,349 @@
+/* 3D Background */
+body {
+    font-family: 'Arial', sans-serif;
+    background: linear-gradient(135deg, #232526 0%, #414345 100%);
+    color: #f5f5f5;
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    box-shadow: inset 0 0 80px #000;
+}
+
+/* 3D Title */
+h1, h2 {
+    text-align: center;
+    margin: 20px 0;
+    color: #ffcc00;
+    text-shadow:
+        0 2px 8px #000,
+        0 0px 20px #ffcc00,
+        2px 2px 0 #222;
+    letter-spacing: 2px;
+}
+
+/* 3D Table */
+table {
+    width: 90%;
+    margin: 20px auto;
+    border-collapse: collapse;
+    background: linear-gradient(145deg, #222 60%, #444 100%);
+    box-shadow: 0 8px 24px #000a, 0 1.5px 0 #ffcc00 inset;
+    border-radius: 12px;
+    overflow: hidden;
+}
+
+th, td {
+    border: 1px solid #444;
+    padding: 12px;
+    text-align: left;
+    color: #f5f5f5;
+    box-shadow: 0 1px 2px #000a inset;
+}
+
+th {
+    background: linear-gradient(90deg, #222 70%, #ffcc00 100%);
+    color: #ffcc00;
+    font-size: 1.2rem;
+    text-shadow: 1px 1px 2px #000;
+}
+
+td {
+    font-size: 1rem;
+    background: rgba(30,30,30,0.7);
+}
+
+tr:nth-child(even) {
+    background: rgba(40,40,40,0.7);
+}
+
+tr:hover {
+    background: #222a;
+    box-shadow: 0 2px 8px #000a;
+}
+
+/* 3D Buttons */
+button {
+    background: linear-gradient(145deg, #ffcc00 60%, #bfa100 100%);
+    color: #1a1a1a;
+    border: none;
+    padding: 10px 18px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin-left: 10px;
+    box-shadow: 0 4px 16px #000a, 0 2px 0 #bfa100 inset;
+    transition: transform 0.1s, box-shadow 0.1s;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+button:hover {
+    background: linear-gradient(145deg, #ffe066 60%, #ffcc00 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px #000a, 0 2px 0 #ffcc00 inset;
+}
+
+/* 3D Clock */
+#clock {
+    position: relative;
+    width: 200px;
+    height: 200px;
+    margin: 0 auto;
+    background: radial-gradient(circle at 60% 40%, #444 60%, #111 100%);
+    border: 8px solid #ffcc00;
+    border-radius: 50%;
+    box-shadow:
+        0 8px 32px #000c,
+        0 0 0 8px #222 inset,
+        0 0 40px #ffcc00a0 inset;
+    overflow: visible;
+}
+
+#clock::after {
+    content: '';
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    background: radial-gradient(circle, #ffcc00 60%, #bfa100 100%);
+    border-radius: 50%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    z-index: 10;
+    box-shadow: 0 0 16px #ffcc00a0, 0 2px 8px #000a;
+}
+
+/* Clock Numbers */
+.clock-number {
+    position: absolute;
+    width: 28px;
+    height: 28px;
+    color: #ffcc00;
+    font-size: 1.2rem;
+    font-weight: bold;
+    text-align: center;
+    line-height: 28px;
+    transform: translate(-50%, -50%);
+    text-shadow: 0 2px 8px #000, 0 0 8px #ffcc00a0;
+    background: rgba(0,0,0,0.4);
+    border-radius: 50%;
+    box-shadow: 0 2px 8px #000a;
+}
+
+/* Clock Tick Marks */
+.tick {
+    position: absolute;
+    height: 2px;
+    border-radius: 1px;
+    background-color: #ffcc00;
+    z-index: 2;
+    box-shadow: 0 1px 4px #000a;
+}
+
+.tick.hour {
+    background-color: #f5f5f5;
+    height: 4px;
+    box-shadow: 0 2px 8px #ffcc00a0;
+}
+
+/* Clock Hands */
+#hour-hand, #minute-hand, #second-hand {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform-origin: 0% 50%;
+    border-radius: 2px;
+    box-shadow: 0 2px 8px #000a;
+}
+
+#hour-hand {
+    width: 30%;
+    height: 8px;
+    background: linear-gradient(90deg, #ffcc00 60%, #bfa100 100%);
+    z-index: 3;
+}
+
+#minute-hand {
+    width: 40%;
+    height: 6px;
+    background: linear-gradient(90deg, #ffcc00 60%, #bfa100 100%);
+    z-index: 2;
+}
+
+#second-hand {
+    width: 50%;
+    height: 3px;
+    background: linear-gradient(90deg, #f44336 60%, #b71c1c 100%);
+    z-index: 1;
+    box-shadow: 0 0 8px #f44336a0;
+}
+
+/* Timer Section */
+#timer-section {
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #232526 60%, #414345 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #000a;
+    padding: 20px 0;
+}
+
+#timer {
+    font-size: 2rem;
+    margin: 10px 0;
+    color: #ffcc00;
+    letter-spacing: 2px;
+    text-shadow: 0 2px 8px #000, 0 0 8px #ffcc00a0;
+}
+
+#timer button {
+    margin: 5px;
+}
+
+/* Calendar Section */
+#calendar-section {
+    text-align: center;
+    margin: 20px 0;
+    background: linear-gradient(135deg, #232526 60%, #414345 100%);
+    border-radius: 16px;
+    box-shadow: 0 4px 24px #000a;
+    padding: 20px 0;
+}
+
+#calendar {
+    display: inline-block;
+    text-align: left;
+    background: radial-gradient(circle at 60% 40%, #444 60%, #111 100%);
+    padding: 10px;
+    border-radius: 8px;
+    box-shadow: 0 4px 16px #000a, 0 0 24px #ffcc00a0 inset;
+}
+
+/* Modal Styles */
+#workout-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.85);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(2px);
+}
+
+#modal-content {
+    background: linear-gradient(135deg, #232526 60%, #414345 100%);
+    padding: 24px;
+    border-radius: 16px;
+    text-align: center;
+    color: #f5f5f5;
+    width: 320px;
+    box-shadow: 0 4px 24px #000a, 0 0 24px #ffcc00a0 inset;
+}
+
+#modal-content h3 {
+    margin-bottom: 10px;
+    color: #ffcc00;
+    text-shadow: 0 2px 8px #000, 0 0 8px #ffcc00a0;
+}
+
+#modal-content textarea {
+    width: 100%;
+    height: 100px;
+    margin-bottom: 10px;
+    background-color: #444;
+    color: #f5f5f5;
+    border: none;
+    border-radius: 4px;
+    padding: 10px;
+    resize: none;
+    box-shadow: 0 2px 8px #000a;
+}
+
+#modal-content button {
+    background: linear-gradient(145deg, #ffcc00 60%, #bfa100 100%);
+    color: #1a1a1a;
+    border: none;
+    padding: 8px 12px;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 8px;
+    margin: 5px;
+    box-shadow: 0 4px 16px #000a, 0 2px 0 #bfa100 inset;
+    font-weight: bold;
+    letter-spacing: 1px;
+}
+
+#modal-content button:hover {
+    background: linear-gradient(145deg, #ffe066 60%, #ffcc00 100%);
+    transform: translateY(-2px) scale(1.05);
+    box-shadow: 0 8px 24px #000a, 0 2px 0 #ffcc00 inset;
+}
+#calendar {
+    min-width: 320px;
+    max-width: 420px;
+    width: 100%;
+}
+/* Highlight completed days */
+.calendar-date.completed {
+    background-color: #4caf50;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px #000a, 0 0 8px #4caf50a0;
+}
+
+/* Highlight skipped days */
+.calendar-date.skipped {
+    background-color: #f44336;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px #000a, 0 0 8px #f44336a0;
+}
+
+/* Highlight rest days */
+.calendar-date.rest {
+    background-color: #2196f3;
+    color: #fff;
+    font-weight: bold;
+    box-shadow: 0 2px 8px #000a, 0 0 8px #2196f3a0;
+}
+/* Calendar grid for days and dates */
+.calendar-days, .calendar-dates {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    gap: 4px;
+    margin-bottom: 8px;
+}
+
+.calendar-day-label, .calendar-date {
+    text-align: center;
+    padding: 10px 0;
+    background-color: #444;
+    color: #f5f5f5;
+    border-radius: 4px;
+    font-weight: bold;
+    font-size: 1rem;
+    box-shadow: 0 1px 4px #000a;
+}
+
+.calendar-date.empty {
+    background: transparent;
+    box-shadow: none;
+    cursor: default;
+}
+/* Batman Logo (SVG) */
+.batman-logo {
+    display: block;
+    margin: 0 auto 16px auto;
+    width: 180px;   /* Try 180px for a more prominent logo */
+    height: auto;
+    filter: drop-shadow(0 4px 16px #ffcc00a0);
+    transition: transform 0.2s;
+}
+.batman-logo:hover {
+    transform: scale(1.08) rotate(-3deg);
+    filter: drop-shadow(0 8px 32px #ffcc00c0);
+}
