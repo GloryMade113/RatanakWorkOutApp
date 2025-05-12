@@ -1,0 +1,16 @@
+{
+  "name": "fitness-web-app",
+  "version": "1.0.0",
+  "description": "A fitness web application to track workout schedules and routines.",
+  "main": "src/app.js",
+  "type": "module",
+  "scripts": {
+    "start": "node src/app.js",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "express": "^4.17.1"
+  },
+  "author": "",
+  "license": "ISC"
+}
