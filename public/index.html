@@ -32,6 +32,15 @@
     <!-- Calendar Section -->
     <div id="calendar-section">
     <h2>Workout Calendar</h2>
+    <!-- User Selector -->
+    <div id="user-selector-section">
+        <label for="user-selector"><strong>Select User:</strong></label>
+        <select id="user-selector">
+            <option value="Ratanak">Ratanak</option>
+            <option value="Yokoyama">Yokoyama</option>
+            <option value="Uesa">Uesa</option>
+        </select>
+    </div>
     <div id="calendar"></div>
 </div>
 
@@ -216,17 +225,25 @@ const calendar = document.getElementById('calendar');
 const today = new Date();
 const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
-const workoutData = JSON.parse(localStorage.getItem('workoutData')) || {};
 
+function getUserWorkoutData(user) {
+    return JSON.parse(localStorage.getItem(`workoutData_${user}`)) || {};
+}
+function setUserWorkoutData(user, data) {
+    localStorage.setItem(`workoutData_${user}` , JSON.stringify(data));
+}
+
+// Update calendar and modal to use per-user data
 function generateCalendar(month, year) {
-    calendar.innerHTML = ''; // Clear previous calendar
+    calendar.innerHTML = '';
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDay = new Date(year, month, 1).getDay();
+    const workoutData = getUserWorkoutData(currentUser);
 
     // Add month and year header
     const header = document.createElement('div');
     header.className = 'calendar-header';
-    header.innerHTML = `<h3>${today.toLocaleString('default', { month: 'long' })} ${year}</h3>`;
+    header.innerHTML = `<h3>${today.toLocaleString('default', { month: 'long' })} ${year} - <span style='font-size:0.8em;'>${currentUser}</span></h3>`;
     calendar.appendChild(header);
 
     // Add day labels
@@ -257,11 +274,11 @@ function generateCalendar(month, year) {
         const dateKey = `${year}-${month + 1}-${date}`;
         if (workoutData[dateKey]) {
             if (workoutData[dateKey].status === 'completed') {
-                dateCell.classList.add('completed'); // Green for completed
+                dateCell.classList.add('completed');
             } else if (workoutData[dateKey].status === 'skipped') {
-                dateCell.classList.add('skipped'); // Red for skipped
+                dateCell.classList.add('skipped');
             } else if (workoutData[dateKey].status === 'rest') {
-                dateCell.classList.add('rest'); // Blue for rest day
+                dateCell.classList.add('rest');
             }
         }
 
@@ -279,45 +296,54 @@ function openWorkoutModal(dateKey) {
     const skipButton = document.getElementById('mark-skipped');
     const restButton = document.getElementById('mark-rest');
     const closeButton = document.getElementById('close-modal');
+    const workoutData = getUserWorkoutData(currentUser);
 
     modal.style.display = 'block';
-    modalDate.textContent = `Workout for ${dateKey}`;
+    modalDate.textContent = `Workout for ${dateKey} (${currentUser})`;
     workoutInput.value = workoutData[dateKey]?.details || '';
 
     saveButton.onclick = () => {
         const inputValue = workoutInput.value.trim();
 
         if (inputValue) {
-            // Save workout details and mark as completed
             workoutData[dateKey] = { status: 'completed', details: inputValue };
         } else {
-            // If input is empty, remove the entry from workoutData
             delete workoutData[dateKey];
         }
 
-        localStorage.setItem('workoutData', JSON.stringify(workoutData));
+        setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
-        generateCalendar(currentMonth, currentYear); // Refresh calendar
+        generateCalendar(currentMonth, currentYear);
     };
 
     skipButton.onclick = () => {
         workoutData[dateKey] = { status: 'skipped', details: '' };
-        localStorage.setItem('workoutData', JSON.stringify(workoutData));
+        setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
-        generateCalendar(currentMonth, currentYear); // Refresh calendar
+        generateCalendar(currentMonth, currentYear);
     };
 
     restButton.onclick = () => {
         workoutData[dateKey] = { status: 'rest', details: '' };
-        localStorage.setItem('workoutData', JSON.stringify(workoutData));
+        setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
-        generateCalendar(currentMonth, currentYear); // Refresh calendar
+        generateCalendar(currentMonth, currentYear);
     };
 
     closeButton.onclick = () => {
         modal.style.display = 'none';
     };
 }
+
+const userSelector = document.getElementById('user-selector');
+let currentUser = localStorage.getItem('currentUser') || 'Ratanak';
+userSelector.value = currentUser;
+
+userSelector.addEventListener('change', function() {
+    currentUser = userSelector.value;
+    localStorage.setItem('currentUser', currentUser);
+    generateCalendar(currentMonth, currentYear);
+});
 
 generateCalendar(currentMonth, currentYear);
 
