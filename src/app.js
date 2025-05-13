@@ -1,22 +1,21 @@
 import express from "express";
-import bodyParser from "body-parser";
 import path from "path";
-import { fileURLToPath } from "url";
-import workoutRoutes from "./routes/workoutRoutes.js";
 import cors from "cors";
+import workoutRoutes from "./routes/workoutRoutes.js";
+import { fileURLToPath } from "url";
+
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
 app.use(cors());
-app.use(bodyParser.json());
 app.use(express.json());
 
-// Serve static files from the "src/views" folder
-const __filename = fileURLToPath(import.meta.url);
-const __dirname = path.dirname(__filename);
-app.use(express.static(path.join(__dirname, "views")));
+// Serve static files from the "public" folder
+app.use(express.static(path.join(__dirname, "../public")));
 
 // API Routes
 app.use("/api", workoutRoutes);
@@ -62,3 +61,5 @@ app.get("/", (req, res) => {
 app.listen(PORT, () => {
     console.log(`Server is running on http://localhost:${PORT}`);
 });
+
+export default app;
