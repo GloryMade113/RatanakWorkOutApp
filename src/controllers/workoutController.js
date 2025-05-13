@@ -1,3 +1,18 @@
+const fs = require('fs');
+const path = require('path');
+const progressFile = path.join(__dirname, '../../progress-data.json');
+
+function readProgressData() {
+    try {
+        return JSON.parse(fs.readFileSync(progressFile, 'utf8'));
+    } catch (e) {
+        return {};
+    }
+}
+function writeProgressData(data) {
+    fs.writeFileSync(progressFile, JSON.stringify(data, null, 2), 'utf8');
+}
+
 class WorkoutController {
     constructor() {
         this.schedule = {
@@ -35,6 +50,8 @@ class WorkoutController {
         // Bind methods to the class instance
         this.getWorkoutSchedule = this.getWorkoutSchedule.bind(this);
         this.addWorkout = this.addWorkout.bind(this);
+        this.getUserProgress = this.getUserProgress.bind(this);
+        this.setUserProgress = this.setUserProgress.bind(this);
     }
 
     getWorkoutSchedule(req, res) {
@@ -59,6 +76,23 @@ class WorkoutController {
         } else {
             res.status(400).json({ message: "Invalid day!" });
         }
+    }
+
+    getUserProgress(req, res) {
+        const user = req.query.user;
+        if (!user) return res.status(400).json({ error: 'User required' });
+        const allData = readProgressData();
+        res.json(allData[user] || {});
+    }
+
+    setUserProgress(req, res) {
+        const user = req.body.user;
+        const progress = req.body.progress;
+        if (!user || !progress) return res.status(400).json({ error: 'User and progress required' });
+        const allData = readProgressData();
+        allData[user] = progress;
+        writeProgressData(allData);
+        res.json({ success: true });
     }
 }
 

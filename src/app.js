@@ -3,12 +3,15 @@ import bodyParser from "body-parser";
 import path from "path";
 import { fileURLToPath } from "url";
 import workoutRoutes from "./routes/workoutRoutes.js";
+import cors from "cors";
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // Middleware
+app.use(cors());
 app.use(bodyParser.json());
+app.use(express.json());
 
 // Serve static files from the "src/views" folder
 const __filename = fileURLToPath(import.meta.url);

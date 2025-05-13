@@ -221,74 +221,81 @@ addClockNumbersAndMarks();
     // Calendar functionality
 // Calendar functionality
 // Calendar functionality
+const API_BASE = '/api/progress';
+
+async function getUserWorkoutData(user) {
+    const res = await fetch(`${API_BASE}?user=${encodeURIComponent(user)}`);
+    return await res.json();
+}
+async function setUserWorkoutData(user, data) {
+    await fetch(API_BASE, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ user, progress: data })
+    });
+}
+
 const calendar = document.getElementById('calendar');
 const today = new Date();
 const currentMonth = today.getMonth();
 const currentYear = today.getFullYear();
-
-function getUserWorkoutData(user) {
-    return JSON.parse(localStorage.getItem(`workoutData_${user}`)) || {};
-}
-function setUserWorkoutData(user, data) {
-    localStorage.setItem(`workoutData_${user}` , JSON.stringify(data));
-}
 
 // Update calendar and modal to use per-user data
 function generateCalendar(month, year) {
     calendar.innerHTML = '';
     const daysInMonth = new Date(year, month + 1, 0).getDate();
     const firstDay = new Date(year, month, 1).getDay();
-    const workoutData = getUserWorkoutData(currentUser);
+    getUserWorkoutData(currentUser).then(workoutData => {
+        // Add month and year header
+        const header = document.createElement('div');
+        header.className = 'calendar-header';
+        header.innerHTML = `<h3>${today.toLocaleString('default', { month: 'long' })} ${year} - <span style='font-size:0.8em;'>${currentUser}</span></h3>`;
+        calendar.appendChild(header);
 
-    // Add month and year header
-    const header = document.createElement('div');
-    header.className = 'calendar-header';
-    header.innerHTML = `<h3>${today.toLocaleString('default', { month: 'long' })} ${year} - <span style='font-size:0.8em;'>${currentUser}</span></h3>`;
-    calendar.appendChild(header);
+        // Add day labels
+        const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+        const daysRow = document.createElement('div');
+        daysRow.className = 'calendar-days';
+        days.forEach(day => {
+            const dayElement = document.createElement('div');
+            dayElement.className = 'calendar-day-label';
+            dayElement.textContent = day;
+            daysRow.appendChild(dayElement);
+        });
+        calendar.appendChild(daysRow);
 
-    // Add day labels
-    const days = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
-    const daysRow = document.createElement('div');
-    daysRow.className = 'calendar-days';
-    days.forEach(day => {
-        const dayElement = document.createElement('div');
-        dayElement.className = 'calendar-day-label';
-        dayElement.textContent = day;
-        daysRow.appendChild(dayElement);
-    });
-    calendar.appendChild(daysRow);
-
-    // Add days
-    const datesRow = document.createElement('div');
-    datesRow.className = 'calendar-dates';
-    for (let i = 0; i < firstDay; i++) {
-        const emptyCell = document.createElement('div');
-        emptyCell.className = 'calendar-date empty';
-        datesRow.appendChild(emptyCell);
-    }
-    for (let date = 1; date <= daysInMonth; date++) {
-        const dateCell = document.createElement('div');
-        dateCell.className = 'calendar-date';
-        dateCell.textContent = date;
-
-        const dateKey = `${year}-${month + 1}-${date}`;
-        if (workoutData[dateKey]) {
-            if (workoutData[dateKey].status === 'completed') {
-                dateCell.classList.add('completed');
-            } else if (workoutData[dateKey].status === 'skipped') {
-                dateCell.classList.add('skipped');
-            } else if (workoutData[dateKey].status === 'rest') {
-                dateCell.classList.add('rest');
-            }
+        // Add days
+        const datesRow = document.createElement('div');
+        datesRow.className = 'calendar-dates';
+        for (let i = 0; i < firstDay; i++) {
+            const emptyCell = document.createElement('div');
+            emptyCell.className = 'calendar-date empty';
+            datesRow.appendChild(emptyCell);
         }
+        for (let date = 1; date <= daysInMonth; date++) {
+            const dateCell = document.createElement('div');
+            dateCell.className = 'calendar-date';
+            dateCell.textContent = date;
 
-        dateCell.addEventListener('click', () => openWorkoutModal(dateKey));
-        datesRow.appendChild(dateCell);
-    }
-    calendar.appendChild(datesRow);
+            const dateKey = `${year}-${month + 1}-${date}`;
+            if (workoutData[dateKey]) {
+                if (workoutData[dateKey].status === 'completed') {
+                    dateCell.classList.add('completed');
+                } else if (workoutData[dateKey].status === 'skipped') {
+                    dateCell.classList.add('skipped');
+                } else if (workoutData[dateKey].status === 'rest') {
+                    dateCell.classList.add('rest');
+                }
+            }
+
+            dateCell.addEventListener('click', () => openWorkoutModal(dateKey, workoutData));
+            datesRow.appendChild(dateCell);
+        }
+        calendar.appendChild(datesRow);
+    });
 }
 
-function openWorkoutModal(dateKey) {
+function openWorkoutModal(dateKey, workoutData) {
     const modal = document.getElementById('workout-modal');
     const modalDate = document.getElementById('modal-date');
     const workoutInput = document.getElementById('workout-input');
@@ -296,13 +303,12 @@ function openWorkoutModal(dateKey) {
     const skipButton = document.getElementById('mark-skipped');
     const restButton = document.getElementById('mark-rest');
     const closeButton = document.getElementById('close-modal');
-    const workoutData = getUserWorkoutData(currentUser);
 
     modal.style.display = 'block';
     modalDate.textContent = `Workout for ${dateKey} (${currentUser})`;
     workoutInput.value = workoutData[dateKey]?.details || '';
 
-    saveButton.onclick = () => {
+    saveButton.onclick = async () => {
         const inputValue = workoutInput.value.trim();
 
         if (inputValue) {
@@ -311,21 +317,21 @@ function openWorkoutModal(dateKey) {
             delete workoutData[dateKey];
         }
 
-        setUserWorkoutData(currentUser, workoutData);
+        await setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
         generateCalendar(currentMonth, currentYear);
     };
 
-    skipButton.onclick = () => {
+    skipButton.onclick = async () => {
         workoutData[dateKey] = { status: 'skipped', details: '' };
-        setUserWorkoutData(currentUser, workoutData);
+        await setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
         generateCalendar(currentMonth, currentYear);
     };
 
-    restButton.onclick = () => {
+    restButton.onclick = async () => {
         workoutData[dateKey] = { status: 'rest', details: '' };
-        setUserWorkoutData(currentUser, workoutData);
+        await setUserWorkoutData(currentUser, workoutData);
         modal.style.display = 'none';
         generateCalendar(currentMonth, currentYear);
     };
